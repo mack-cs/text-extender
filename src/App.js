@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, version } from "react";
 import "./styles.css";
 
 export default function App() {
@@ -38,38 +38,88 @@ export default function App() {
 function TextExpander({
   children,
   collapsedNumWords = 10,
-  expandButtonText = "Show",
-  collapseButtonText = "Show test",
+  expandButtonText = "Show text",
+  collapseButtonText = "Collapse text",
   buttonColor = "red",
   className = "",
   expanded = false,
 }) {
-  const [showText, setShowText] = useState(false);
+  const [collapseText, setCollapseText] = useState(expanded);
 
+  function collapseWords(sentence, numWordsToRemove) {
+    let words = sentence.split(" ");
 
-  function collapseWordsAtEnd(sentence, numWords) {
-    // Split the sentence into an array of words
-    let words = sentence.split(' ');
-
-    // If the number of words to collapse is greater than or equal to
-    // the total number of words, return the original sentence
-    if (numWords >= words.length) {
-        return sentence;
+    if (numWordsToRemove >= words.length) {
+      return "";
     }
 
-    // Slice the array to keep only the desired number of words from the end
-    let collapsedWords = words.slice(-numWords);
+    let remainingWords = words.slice(0, words.length - numWordsToRemove);
 
-    // Join the words back into a string
-    let collapsedSentence = collapsedWords.join(' ');
+    let collapsedSentence = remainingWords.join(" ");
 
     return collapsedSentence;
-}
+  }
 
+  function handleTextCollapse() {
+    setCollapseText((collapseText) => !collapseText)
+  }
 
+  const buttonStyles = {
+    color: buttonColor,
+    cursor: "pointer",
+  };
   return (
     <div className={`default ${className}`}>
-      <p>{ showText? children:collapseWordsAtEnd(children, collapsedNumWords)}</p>
+      <p>{collapseText ? children : collapseWords(children, collapsedNumWords)}</p>
+      <strong style={buttonStyles} onClick={handleTextCollapse}>
+        {collapseText ? collapseButtonText:expandButtonText}
+      </strong>
     </div>
   );
 }
+
+
+
+
+// My versionfunction TextExpander({
+//   children,
+//   collapsedNumWords = 10,
+//   expandButtonText = "Show text",
+//   collapseButtonText = "Collapse text",
+//   buttonColor = "red",
+//   className = "",
+//   expanded = false,
+// }) {
+//   const [collapseText, setCollapseText] = useState(false);
+
+//   function collapseWords(sentence, numWordsToRemove) {
+//     let words = sentence.split(" ");
+
+//     if (numWordsToRemove >= words.length) {
+//       return "";
+//     }
+
+//     let remainingWords = words.slice(0, words.length - numWordsToRemove);
+
+//     let collapsedSentence = remainingWords.join(" ");
+
+//     return collapsedSentence;
+//   }
+
+//   function handleTextCollapse() {
+//     setCollapseText((collapseText) => !collapseText)
+//   }
+
+//   const buttonStyles = {
+//     color: buttonColor,
+//     cursor: "pointer",
+//   };
+//   return (
+//     <div className={`default ${className}`}>
+//       <p>{collapseText ? children : collapseWords(children, collapsedNumWords)}</p>
+//       <strong style={buttonStyles} onClick={handleTextCollapse}>
+//         {collapseText ? collapseButtonText:expandButtonText}
+//       </strong>
+//     </div>
+//   );
+// }
